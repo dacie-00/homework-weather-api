@@ -24,24 +24,24 @@ function getCoordinatesFromAPI(string $apiKey, string $city, string $country): a
     $query = http_build_query($data);
     $url = $baseLink . $query;
 
-    $curl = curl_init();
+    $curlHandle = curl_init();
 
-    curl_setopt_array($curl, [
+    curl_setopt_array($curlHandle, [
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_CONNECTTIMEOUT => 10,
     ]);
 
-    $response = curl_exec($curl);
+    $response = curl_exec($curlHandle);
 
     $response = json_decode($response);
 
     if (!$response) {
-        curl_close($curl);
+        curl_close($curlHandle);
         exit("Failed to connect to geocache API.\n");
     }
 
-    $httpCode = (curl_getinfo($curl, CURLINFO_HTTP_CODE));
+    $httpCode = (curl_getinfo($curlHandle, CURLINFO_HTTP_CODE));
 
     if ($httpCode !== 200) {
         if (property_exists($response, "message")) {
@@ -51,7 +51,7 @@ function getCoordinatesFromAPI(string $apiKey, string $city, string $country): a
         exit("Unable to get weather data. Status code - $httpCode\n");
     }
 
-    curl_close($curl);
+    curl_close($curlHandle);
 
     if (count($response) === 0) {
         exit("Location could not be found!\n");
@@ -67,22 +67,22 @@ function getWeatherFromAPI(string $apikey, float $latitude, float $longitude): s
     $query = http_build_query($data);
     $url = $baseLink . $query;
 
-    $curl = curl_init();
+    $curlHandle = curl_init();
 
-    curl_setopt_array($curl, [
+    curl_setopt_array($curlHandle, [
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_CONNECTTIMEOUT => 10
     ]);
 
-    $response = curl_exec($curl);
+    $response = curl_exec($curlHandle);
 
     if (!$response) {
-        curl_close($curl);
+        curl_close($curlHandle);
         exit("Failed to connect to geocache API.\n");
     }
 
-    $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    $httpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
 
     $response = json_decode($response);
 
@@ -98,7 +98,7 @@ function getWeatherFromAPI(string $apikey, float $latitude, float $longitude): s
         exit("Failed to get weather for location.\n");
     }
 
-    curl_close($curl);
+    curl_close($curlHandle);
 
     return $response;
 }
